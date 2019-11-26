@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const Product = require('../models/products');
+const Product = require('../models/product');
 
 router.get('/', (req, res, next) => {
     Product.find().select('name price _id').exec().then(docs => {
@@ -40,7 +40,7 @@ router.post('/', (req, res, next) => {
     });
     product.save().then(result => {
         console.log(result);
-        res.status(200).json({
+        res.status(201).json({
             message: 'Created product successfully',
             createdProduct: {
                 name: result.name,
@@ -107,7 +107,10 @@ router.patch("/:productId", (req, res, next) => {
 
 router.delete('/:productId', (req, res, next) => {
     const id = req.params.productId;
-    Product.remove({ _id: id }).exec().then(result => {
+    Product.remove({ _id: id }).exec().then(product => {
+        if(!product){
+            return res.status(404).json({message:'Product not found'});
+        }
         res.status(200).json({
             message: 'Product deleted',
             request: {
