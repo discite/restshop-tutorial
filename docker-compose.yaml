@@ -1,0 +1,23 @@
+# https://dev.to/alex_barashkov/using-docker-for-nodejs-in-development-and-production-3cgp
+version: '3'
+
+services:
+  rest-api:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 5000:5000
+      - 9229:9229
+    command: npm run dev
+    depends_on:
+      - database
+
+  database:
+    image: 'mongo'
+    volumes:
+      - data-volume:/data/db
+
+volumes:
+  data-volume:

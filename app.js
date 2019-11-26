@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products');
 const ordersRoutes = require('./api/routes/orders');
 
-mongoose.connect('mongodb://localhost/node_shop', {
+mongoose.connect('mongodb://database/node_shop', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
