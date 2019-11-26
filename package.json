@@ -1,7 +1,7 @@
 {
   "name": "rest-shop",
   "version": "1.0.0",
-  "description": "A Node.JS RESTFful aPI Tutorial PRoject",
+  "description": "A Node.JS RESTFful API Tutorial Project",
   "main": "index.js",
   "scripts": {
     "start": "node server",
