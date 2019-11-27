@@ -7,7 +7,7 @@ const Product = require('../models/product');
 
 // Handle incoming GET requests to /orders
 router.get('/', (req, res, next) => {
-    Order.find().select('product quantity _id').exec().then(docs=>{
+    Order.find().populate('product', 'name').select('product quantity _id').exec().then(docs=>{
         const response = {
             count: docs.length,
             products: docs.map(doc => {
@@ -28,41 +28,47 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
-    Order.findById().then(product => {
-        if(!product){
-            res.status(404).json({message:'Product not found'});
+router.post("/", (req, res, next) => {
+    Product.findById(req.body.productId)
+      .then(product => {
+        if (!product) {
+          return res.status(404).json({
+            message: "Product not found"
+          });
         }
         const order = new Order({
-            _id: mongoose.Types.ObjectId(),
-            quantity: req.body.quantity,
-            product: req.body.productId
+          _id: mongoose.Types.ObjectId(),
+          quantity: req.body.quantity,
+          product: req.body.productId
         });
         return order.save();
-    })
-    .then(result=>{
+      })
+      .then(result => {
         console.log(result);
         res.status(201).json({
-            message: 'Order stored',
-            createdOrder: {
-                quantity: result.quantity,
-                product: result.product,
-                _id: result.id,
-                request: {
-                    type: 'GET',
-                    url: `http://localhost:5000/orders/${result.id}`
-                }
-            }
+          message: "Order stored",
+          createdOrder: {
+            _id: result._id,
+            product: result.product,
+            quantity: result.quantity
+          },
+          request: {
+            type: "GET",
+            url: "http://localhost:5000/orders/" + result._id
+          }
         });
-    }).catch(err=>{
+      })
+      .catch(err => {
         console.log(err);
-        res.status(500).json({error:err});
-    });
-});
+        res.status(500).json({
+          error: err
+        });
+      });
+  });
 
 router.get('/:orderId', (req, res, next) => {
     const id = req.params.orderId;
-    Order.findById(id).select('product quantity _id').exec().then(doc => {
+    Order.findById(id).populate('product').select('product quantity _id').exec().then(doc => {
         console.log('From database', order);
         if (order) {
             res.status(200).json({

@@ -15,8 +15,10 @@ mongoose.connect(dbURL, {
     useUnifiedTopology: true
 })
 
-//Logger
+// Logger
 app.use(morgan('dev'));
+// Static folders
+app.use('/uploads',express.static('uploads'));
 // Body Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
